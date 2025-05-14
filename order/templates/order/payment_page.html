@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {# 继承你的基础模板 #}
+{% load static %} {# 如果需要加载静态文件 #}
+
+{% block title %}确认支付 - 订单 {{ order.order_id }}{% endblock %} {# 设置页面标题 #}
+
+{% block content %} {# 定义页面主体内容块 #}
+
+<div class="container mt-4">
+    <h2>确认支付</h2>
+
+    {% if order %}
+        <div class="card mb-4">
+            <div class="card-header">
+                订单号: <strong>{{ order.order_id }}</strong>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">订单摘要</h5>
+                <p><strong>商品:</strong> {{ order.product.name }}</p>
+                <p><strong>购买数量:</strong> {{ order.quantity }}</p>
+                <p><strong>总价:</strong> <span class="text-danger fs-4">¥{{ order.total_price }}</span></p> {# 突出显示总价 #}
+
+                <hr>
+
+                <p>您即将使用**支付宝**支付此订单。</p>
+                <p>请确认订单信息无误后，点击下方按钮前往支付宝完成支付。</p>
+
+                {# 支付按钮通常会触发一个 POST 请求到视图，由视图调用支付宝 SDK 并进行跳转 #}
+                {# 这里创建一个表单，提交到处理支付初始化的 URL #}
+                <form action="{% url 'order:payment_initiate' order_id=order.order_id %}" method="post">
+                    {% csrf_token %} {# Django POST 表单必需的安全标签 #}
+                    {# 你可能还需要一些隐藏字段来传递额外信息，但 order_id 已经在 URL 中了 #}
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-alipay me-2"></i> 确认并前往支付宝支付
+                    </button> {# 使用 Bootstrap 样式和图标（如果引入了 Font Awesome） #}
+                </form>
+
+                <hr>
+
+                {# 返回或取消链接 #}
+                <p>
+                    <a href="{% url 'order:detail' order_id_or_pk=order.order_id %}" class="btn btn-secondary">返回订单详情</a>
+                </p>
+
+            </div>
+        </div>
+
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            无法加载订单信息进行支付。
+        </div>
+        <p><a href="{% url 'product:list' %}">返回订单列表</a></p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

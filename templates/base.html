@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}这是基础页{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-icons.css' %}">
+    {% block extra_head %} {% endblock %}
+</head>
+
+<body>
+    {% block header %}{% endblock %}
+    {% block content %}{% endblock %}
+    <script src="{% static 'bootstrap-5.3.3/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    {# 添加这个区块来放置额外的 JavaScript #}
+    {% block extra_js %}
+    {# 子模板的 JavaScript 会被插入到这里 #}
+    {% endblock %}
+</body>
+
+</html>

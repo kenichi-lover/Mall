@@ -1,0 +1,43 @@
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex">
+                <div class="w-100 text-center">
+                    <h5 class="modal-title" id="loginModalLabel">用户认证</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane"
+                            type="button" role="tab" aria-controls="login-pane" aria-selected="true">登录</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane"
+                            type="button" role="tab" aria-controls="register-pane" aria-selected="false">注册</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="authTabsContent">
+                    <div class="tab-pane fade show active" id="login-pane" role="tabpanel" aria-labelledby="login-tab"
+                        tabindex="0">
+                        <form method="post" action="{% url 'user:login' %}"> {# 确保 'user:login' 是你的登录视图的 URL 名称 #}
+                            {% csrf_token %}
+                            {{ login_form.as_p }} {# 将 form 替换为你在视图中传递的登录表单变量名，例如 login_form #}
+                            <button type="submit" class="btn btn-primary">登录</button>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="register-pane" role="tabpanel" aria-labelledby="register-tab"
+                        tabindex="0">
+                        <form method="post" action="{% url 'user:register' %}"> {# 假设你的注册视图的 URL 名称是 'user:register' #}
+                            {% csrf_token %}
+                            {{ register_form.as_p }} {# 使用你在视图中传递的注册表单变量名，例如 register_form #}
+                            <button type="submit" class="btn btn-success">注册</button> {# 注册按钮可以使用不同的样式 #}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

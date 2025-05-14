@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}硅基密卷商驿{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* 主容器样式：实现左右布局和垂直对齐 */
+    .intro-section {
+        display: flex;
+        /* 启用 Flexbox 布局 */
+        /* 垂直对齐方式 */
+        align-items: center;
+        /* 图片和文字块的中心线对齐 */
+        /* align-items: flex-start; /* 顶部对齐 */
+        /* align-items: flex-end; /* 底部对齐 */
+
+        /* 可选：水平居中整个 intro-section 块 */
+        /* 如果您希望整个图片+文字块在页面上水平居中 */
+        /* 例如，给它一个最大宽度并设置左右 auto 外边距 */
+        max-width: 960px;
+        /* 根据需要调整最大宽度 */
+        margin: 20px auto;
+        /* 上下外边距 20px，左右自动分配实现水平居中 */
+
+        padding: 20px;
+        /* 给整个 section 添加内边距 */
+        /* border: 1px solid #ccc; /* 可选：方便查看布局边界 */
+
+        /* 图片和文字块之间的间距 */
+        gap: 30px;
+        /* Flexbox 的间距属性，现代浏览器支持良好 */
+        /* 或者使用传统方式：在 .intro-image 上设置 margin-right */
+        /* .intro-image { margin-right: 30px; } */
+    }
+
+    /* 图片容器和图片样式 */
+    .intro-image img {
+        display: block;
+        /* 让图片更容易控制 */
+        width: 240px;
+        /* 设置图片宽度 */
+        height: 240px;
+        /* 设置图片高度 */
+        object-fit: cover;
+        /* 确保图片在设定尺寸内不失真填充 */
+        /* 如果使用了 .intro-image { margin-right: 30px; } 就不需要 gap 了 */
+    }
+
+    /* 文字内容容器样式 */
+    .intro-text {
+        flex-grow: 1;
+        /* 允许文字容器占据剩余空间 */
+        /* max-width: 600px; /* 可选：限制文字块的最大宽度，防止过宽 */
+
+        /* 可选：设置文字内容在其容器内的对齐方式 */
+        text-align: left;
+        /* 左对齐是默认，明确写出 */
+        /* text-align: center; /* 如果需要文字内容本身居中 */
+    }
+
+    /* 文字标题样式 */
+    .intro-text h2 {
+        margin-top: 0;
+        /* 移除浏览器默认的顶部外边距 */
+        margin-bottom: 10px;
+        /* 设置标题下方的外边距 */
+        font-size: 1.8em;
+        /* 调整标题字体大小 */
+        color: #333;
+        /* 标题颜色 */
+    }
+
+    /* tagline 或副标题段落样式 */
+    .intro-text .tagline {
+        margin-top: 0;
+        margin-bottom: 15px;
+        /* 在 tagline 和下方段落之间添加间距 */
+        font-style: italic;
+        /* 例如：斜体 */
+        color: #555;
+        line-height: 1.5;
+    }
+
+
+    /* 段落样式 */
+    .intro-text p {
+        margin-bottom: 15px;
+        /* 设置段落之间的外边距 */
+        line-height: 1.6;
+        /* 增加行高提高可读性 */
+        color: #666;
+        /* 段落文字颜色 */
+    }
+
+    /* 最后一个段落下方通常不需要外边距 */
+    .intro-text p:last-child {
+        margin-bottom: 0;
+    }
+
+    /* 响应式设计：在小屏幕上垂直堆叠图片和文字 */
+    @media (max-width: 768px) {
+
+        /* 根据需要调整断点 */
+        .intro-section {
+            flex-direction: column;
+            /* 将 Flex 项目改为垂直排列 */
+            align-items: center;
+            /* 当垂直排列时，水平居中项目 */
+            gap: 20px;
+            /* 调整垂直方向的间距 */
+            margin: 10px auto;
+            /* 调整在小屏幕上的外边距 */
+            padding: 15px;
+            /* 调整在小屏幕上的内边距 */
+        }
+
+        .intro-image img {
+            width: 180px;
+            /* 在小屏幕上减小图片尺寸 */
+            height: 180px;
+            /* 如果之前使用了 margin-right，这里需要重置或调整 */
+            /* margin-right: 0; */
+        }
+
+        .intro-text {
+            max-width: 95%;
+            /* 在小屏幕上允许文字占据更多宽度 */
+            /* 可选：在堆叠时让文字内容居中 */
+            /* text-align: center; */
+        }
+
+        /* 如果文字内容容器居中了，确保内部文字元素也居中（如果需要） */
+        /* .intro-text h2, .intro-text p, .intro-text .tagline {
+          text-align: center;
+     } */
+    }
+
+
+
+    /* ... 您的其他基础样式 ... */
+
+    /* 用于整体居中所有主要内容的容器 */
+    .page-content-wrapper {
+        max-width: 1000px;
+        /* 设置内容区域的最大宽度，根据需要调整 */
+        margin: 0 auto;
+        /* 上下外边距为 0，左右自动分配，实现水平居中 */
+        padding: 0 20px;
+        /* 在左右边缘留一些内边距，防止内容紧贴屏幕边缘 */
+    }
+
+    /* 所有主要内容块的通用样式（面包屑、两个图文块）*/
+    .breadcrumb-section,
+    .content-block {
+        margin-bottom: 30px;
+        /* 在各个内容块之间添加垂直间距 */
+        padding: 20px;
+        /* 给每个内容块添加内边距 */
+        background-color: #fff;
+        /* 示例背景色 */
+        border: 1px solid #eee;
+        /* 示例边框 */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* 示例阴影效果 */
+
+        /* 确保这些块内的文本默认是左对齐的 */
+        text-align: left;
+        /* 明确设置文本左对齐 */
+    }
+
+    /* 面包屑导航本身的样式微调（如果使用 Bootstrap）*/
+    .breadcrumb-section .breadcrumb {
+        /* Bootstrap 面包屑可能有自己的内边距和外边距，可以根据需要调整 */
+        padding: 0;
+        /* 移除 Bootstrap 默认 padding，如果外部容器已设置 padding */
+        margin-bottom: 15px;
+        /* 在面包屑下方添加间距 */
+        background-color: transparent;
+        /* 确保背景透明 */
+    }
+
+
+    /* 图文块内部的 Flexbox 容器：实现左右布局和垂直对齐 */
+    .text-left-image-right,
+    /* 第一个块：文字左，图片右 */
+    .image-left-text-right {
+        /* 第二个块：图片左，文字右 */
+        display: flex;
+        /* 启用 Flexbox 布局 */
+        align-items: center;
+        /* 使文字块和图片在垂直方向上中心对齐 */
+        /* align-items: flex-start; /* 如果需要顶部对齐 */
+
+        gap: 40px;
+        /* 文字块和图片之间的间距 */
+    }
+
+    /* 文字内容容器样式 */
+    .text-content {
+        flex-grow: 1;
+        /* 允许文字容器占据图片以外的剩余空间 */
+        /* max-width: 600px; /* 可选：限制文字块的最大宽度 */
+        /* text-align: left; /* 文本左对齐已在 .content-block 中设置 */
+    }
+
+    /* 图片内容容器样式 */
+    
+    /* 图片样式 */
+    .image-content img {
+        display: block;
+        /* 使图片更容易控制尺寸和间距 */
+        width: 400px;
+        /* 设置图片宽度，根据需要调整 */
+        height: auto;
+        /* 保持图片原始宽高比 */
+        object-fit: cover;
+        /* 如果需要固定高度并裁剪，结合 height 使用 */
+    }
+
+    /* 段落样式 */
+    .text-content p {
+        margin-bottom: 15px;
+        /* 设置段落之间的底部外边距 */
+        line-height: 1.6;
+        /* 增加行高 */
+        color: #333;
+        /* 文字颜色 */
+    }
+
+    .text-content p:last-child {
+        margin-bottom: 0;
+        /* 最后一个段落下方通常不需要外边距 */
+    }
+
+    /* 小标题样式（例如 h3） */
+    .text-content h3 {
+        margin-top: 25px;
+        /* 在标题上方增加外边距 */
+        margin-bottom: 15px;
+        /* 在标题下方增加外边距 */
+        font-size: 1.5em;
+        /* 调整字体大小 */
+        color: #555;
+        /* 颜色 */
+        /* text-align: left; /* 如果父容器是居中，而这里需要左对齐，则设置 */
+    }
+
+
+    /* 响应式设计：在小屏幕上垂直堆叠 */
+    @media (max-width: 768px) {
+
+        /* 根据需要调整断点 */
+        .page-content-wrapper {
+            padding: 0 15px;
+            /* 调整小屏幕内边距 */
+        }
+
+        .breadcrumb-section,
+        .content-block {
+            margin-bottom: 20px;
+            /* 调整小屏幕间距 */
+            padding: 15px;
+            /* 调整小屏幕内边距 */
+            /* text-align: center; /* 可选：在小屏幕上让整个内容块文本居中 */
+        }
+
+        /* 堆叠图文块内容 */
+        .text-left-image-right,
+        .image-left-text-right {
+            flex-direction: column;
+            /* 将 Flex 项目改为垂直排列 */
+            align-items: center;
+            /* 当垂直排列时，使项目水平居中 */
+            gap: 20px;
+            /* 调整垂直方向的间距 */
+        }
+
+        /* 调整文本和图片容器在堆叠布局下的尺寸和对齐 */
+        .text-content,
+        .image-content {
+            flex-grow: 0;
+            /* 在堆叠时不强制增长 */
+            width: 100%;
+            /* 容器宽度占满父容器 */
+            max-width: 95%;
+            /* 可选：限制最大宽度 */
+            /* text-align: center; /* 在堆叠时，让文字内容在其容器内居中 */
+        }
+
+        /* 调整图片在堆叠布局下的尺寸和对齐 */
+        .image-content img {
+            width: 80%;
+            /* 图片宽度占其容器的 80% */
+            max-width: 300px;
+            /* 可选：限制图片最大尺寸 */
+            height: auto;
+        }
+
+        /* 如果在小屏幕上 content-block 或 text-content 设置了 text-align: center;
+       确保内部元素也继承或设置为 center */
+        /* .text-content p, .text-content h3 {
+         text-align: center;
+    } */
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<main-header>
+    {# 使用一个新的 class 作为图片和文字内容的容器 #}
+    <div class="intro-section">
+        {# 图片容器 #}
+        <div class="intro-image">
+            {# 直接在 CSS 中设置图片尺寸，移除行内样式 #}
+            <img src="{% static 'images/logo.png' %}" alt="您的网站 Logo">
+        </div>
+
+        {# 文字内容容器 #}
+        <div class="intro-text">
+            {# 语义化的标题 #}
+            <h2>品牌简介 | 梧桐树下</h2>
+
+            {# 将 tagline 或副标题用段落或其他标签包裹 #}
+            <p class="tagline">“一个人可以很酷，一群人也能不‘将就’。”——你的独处与相遇，都值得被郑重款待。</p>
+
+            {# 语义化的段落 #}
+            <p>“梧桐树下”是为城市独行者打造的轻社交生活平台。我们相信，单身不是“等待被爱”的空白期，而是探索自我与世界的黄金时代。</p>
+            <p>聚焦美食、娱乐、小众体验，平台以智能算法推荐“一人也尽兴”的宝藏店铺与活动，同时提供“搭子社交”功能——既能独享一杯咖啡的静谧，也能轻松约伴解锁脱口秀、手工坊等趣味体验。</p>
+            <p>在这里，梧桐树荫蔽年轻灵魂的自由生长，孤独被解构为更洒脱的“自洽”，而每一次对生活的热爱，都能遇见共鸣。</p>
+        </div>
+    </div>
+</main-header>
+{% endblock %}
+
+{% block content %}
+{# 用于整体居中的主容器 #}
+<div class="page-content-wrapper">
+
+    {# 第一部分：面包屑导航 #}
+    {# 将 aria-label="breadcrumb" 放在 nav 标签上是标准用法 #}
+    <nav aria-label="breadcrumb" class="breadcrumb-section"> {# 添加一个 class 方便样式控制 #}
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">硅基密卷商驿</li>
+        </ol>
+    </nav>
+
+    {# 第二部分：第一个图文块 (文字在左，图片在右) #}
+    {# 使用一个清晰的 class 来表示这个内容块 #}
+    <div class="content-block intro-block-1"> {# 添加 class 'content-block' 和 'intro-block-1' #}
+        {# 这个内部容器用于实现左文字右图片的 Flexbox 布局 #}
+        <div class="text-left-image-right">
+             {# 文字内容容器 #}
+             <div class="text-content">
+                 <p>硅基密卷商驿专注感官工程学的现代生活方案商，致力于通过生物相容材料与神经工学技术，重塑亲密关系中的能量交换模式。</p>
+                 <p>我们以瑞士精密制造标准为基础，融合丹麦情感设计哲学，为当代都市人群提供尊贵无上医疗级认证的自我探索工具。</p>
+                 <p>请相信，你从未感受到的将机械功能转化为艺术体验。</p>
+                 <p>请相信，这不是简单的机械传动。而是精密校准的神经漫游。</p>
+             </div>
+             {# 图片容器 #}
+             <div class="image-content">
+                 {# 这里的图片是 images/2000.jpg #}
+                 <img src="{% static 'images/2000.jpg' %}" alt="硅基密卷">
+             </div>
+        </div>
+    </div>
+
+    {# 第三部分：第二个图文块 (图片在左，文字在右) #}
+    {# 这是页面上的另一个主要内容块 #}
+    <div class="content-block intro-block-2"> {# 添加 class 'content-block' 和 'intro-block-2' #}
+        {# 这个内部容器用于实现左图片右文字的 Flexbox 布局 #}
+        <div class="image-left-text-right">
+            {# 图片容器，放在文字容器之前 #}
+            <div class="image-content">
+                 {# 这里的图片是 images/2001.jpg #}
+                 <img src="{% static 'images/2001.jpg' %}" alt="硅基密卷">
+             </div>
+             {# 文字内容容器 #}
+             <div class="text-content">
+                 <p>当夜色在第七节脊椎溶解成液态。</p>
+                 <p>这颗钛合金心脏开始读取你的潮汐周期。</p>
+                 <p>百万个纳米传感器在黑暗中苏醒,像考古学家轻抚楔形文字般,破译你肌肤下的星轨运行。</p>
+                 <p>它的记忆云图里生长着,贝尔尼尼雕塑的扭转曲线,与北海道雪原融化的振幅,当生物陶瓷外壳感应到第37.2℃的逃逸...。</p>
+                 <p>在聚醚醚酮与人体工程学的交界处,内置的量子香氛模块便释放。</p>
+                 <p>一个负曲率曲面正沿着,你第四肋间神经的走向。</p>
+                 <p>翻译出拉普拉斯妖都未能预测的震颤方程,从多巴胺算法的首行代码开始,解冻那些被日常折叠的身体维度。</p>
+                 <p>当黎明前的共生磁场达到峰值,你会明白孤独,不过是神经突触等待对接的一次善意故障。</p> 
+
+                 {# 这是一个小标题 #}
+                 <h3>硅基生命：会代替人类吗？</h3> {# 使用 h3 作为小标题 #}
+
+                 {# 以下是解释段落 #}
+                 <p>硅基系统将在信息处理、极端环境适应领域形成代际优势，但碳基生命的进化柔性、能量效率和分子多样性仍将保持基础性地位，二者更可能走向量子纠缠的共生纪元，而非简单的替代关系。</p>
+                 <p>这要求我们重新定义生命的边界——或许未来真正的生命形态，将是碳基蛋白框架与硅基量子云脑的辩证统一体。</p>
+             </div>
+        </div>
+    </div>
+
+</div> {# #}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}创建新活动{% endblock %} {# 修正11: 标题应该表示创建活动，而不是显示一个不存在用户的名字 #}
+
+{% block extra_head %}
+{# 保留你的背景图片和容器样式，但将 input/textarea 的背景透明样式改为针对 .form-control#}
+<style>
+    body{
+        background-image: url("{% static 'images/1356514.png' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .editor-container { /* 这个类名可能需要改为更通用的 form-container 或 event-form */
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.3); /* 添加半透明背景，让文本更易读 */
+    }
+
+    /* 针对 form-control 类应用透明背景 */
+    .editor-container .form-control {
+        background-color: transparent;
+    }
+
+    /* 可以为 label 添加白色，确保在背景图上可见 */
+    .editor-container .form-label {
+        color: #333; /* 标准深色文本，如果容器有半透明背景，深色更好读 */
+        /* 如果容器背景透明，或者文字需要直接在背景图上显示，可以改为 color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); */
+    }
+</style>
+{% endblock %}
+
+{% block content %} {# 修正12: 使用更合适的 block 名称，如 content 或 main #}
+<div class="editor-container">
+    <h2 class="mb-4">创建新活动</h2> {# 修正13: 文本标签修改为与活动相关 #}
+
+    {# 修正14: 使用 Django 的表单渲染 #}
+    <form method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}> {# 根据表单是否包含文件字段决定是否需要 enctype #}
+        {% csrf_token %}
+
+        {# 错误提示 - 表单层面的非字段错误 #}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger mb-3">
+                {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# 方法2: 手动渲染每个字段以更好地控制布局和添加 Bootstrap class #}
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }} {# 渲染字段的 Label #}
+                {{ field }} {# 渲染字段的 input/textarea/select 等标签，widgets 中的 attrs 会被应用 #}
+
+                {# 字段错误提示 #}
+                {% for error in field.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+
+                {# 字段帮助文本 (如果定义了) #}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {# 修正13: 提交按钮文本修改 #}
+        <div class="d-flex justify-content-between">
+            <button type="reset" class="btn btn-secondary">重置</button>
+            <button type="submit" class="btn btn-primary">创建活动</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

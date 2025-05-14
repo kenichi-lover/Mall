@@ -1,0 +1,109 @@
+{% extends 'base.html' %} {# 继承你的基础模板 #}
+{% load static %} {# 加载 static 文件标签 #}
+
+{% block title %}{{ target_user.username }}活动内容{% endblock %} {# 页面标题 #}
+
+{# 可选: 添加一些页面特有的样式 #}
+{% block extra_head %}
+<style>
+    /* 可以为整个内容容器设置一些样式，例如最大宽度和水平居中 */
+    .content-wrapper {
+        max-width: 960px; /* 根据需要调整最大宽度 */
+        margin: 0 auto; /* 水平居中 */
+        padding: 20px;
+    }
+
+    /* 为图片和活动列表板块添加一些样式 */
+    .image-section, 
+    .event-list-section {
+        margin-bottom: 30px; /* 在两个板块之间添加一些垂直间距 */
+        padding: 20px;
+        border: 1px solid #ddd; /* 添加边框以便区分板块，可以移除 */
+        border-radius: 8px;
+        background-color: #f9f9f9; /* 添加背景色，可以移除 */
+    }
+
+    /* 单独为 面包屑板块 添加样式 */
+    .breadcrumb-section {
+        margin-bottom: 30px; /* 添加底部外边距，与下方板块分隔 */
+        border: 1px solid #ddd; /* 添加边框 */
+        padding: 20px; /* 为面包屑容器添加内边距，可以根据需要调整 */
+        border-radius: 8px; /* 添加圆角 */
+        background-color: #f9f9f9; /* 添加背景色 */
+    }
+
+    .image-section {
+        text-align: center; /* 使板块内的行内元素（图片）居中 */
+    }
+
+    .image-section img {
+        max-height: 200px; /* 限制图片的最大高度，保持大小一致 */
+        object-fit: cover; /* 裁剪图片以填充容器，保持比例 */
+    }
+
+     /* 调整图片之间的间距 */
+     .image-row .col {
+        padding: 5px; /* 增加列内边距 */
+     }
+
+</style>
+{% endblock %}
+
+{% block content %} {# 假设你的 base.html 有一个 content block 用于主要内容 #}
+
+<div class="content-wrapper"> {# 主要内容容器，用于水平居中和控制宽度 #}
+
+    {# ==================== 上部分: 三张图片 ==================== #}
+    <div class="image-section">
+        <h3>图片展示</h3> {# 板块标题 #}
+        {# 使用 Bootstrap Row 和 Col 来布局图片 #}
+        <div class="row justify-content-center image-row"> {# justify-content-center 使图片在行中水平居中 #}
+            <div class="col-12 col-md-4"> {# 在小屏幕上占12列，中等及以上屏幕占4列 #}
+                <img src="{% static 'images/9005.jpg' %}" class="img-fluid rounded" alt="Placeholder Image 1">
+            </div>
+            <div class="col-12 col-md-4">
+                <img src="{% static 'images/9006.jpg' %}" class="img-fluid rounded" alt="Placeholder Image 2">
+            </div>
+            <div class="col-12 col-md-4">
+                <img src="{% static 'images/21.jpg' %}" class="img-fluid rounded" alt="Placeholder Image 3">
+            </div>
+        </div>
+    </div>
+
+    <nav aria-label="breadcrumb" class="breadcrumb-section"> {# 添加一个 class 方便样式控制 #}
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">商家活动</li>
+        </ol>
+    </nav>
+
+    {# ==================== 下部分: 活动列表 ==================== #}
+    <div class="event-list-section">
+        {# 显示当前查看的是哪个用户的活动 #}
+        <h2>{{ target_user.username }} 的活动</h2>
+
+        {# 检查是否有活动 #}
+        {% if events %}
+            {# 循环显示活动列表 #}
+            {% for event in events %}
+                {# 使用 Bootstrap Card 来展示每个活动 #}
+                <div class="card mb-3"> {# mb-3 添加底部外边距 #}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            开始: {{ event.start_time|date:"Y-m-d H:i" }} - 结束: {{ event.end_time|date:"Y-m-d H:i" }}
+                            {% if event.location %}<br> 地点: {{ event.location }}{% endif %}
+                        </h6>
+                        <p class="card-text">{{ event.description|linebreaksbr }}</p> {# 使用 linebreaksbr 过滤器保留换行符 #}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            {# 如果没有活动 #}
+            <p>该用户还没有创建任何活动。</p>
+        {% endif %}
+    </div>
+
+</div> {# 结束 content-wrapper #}
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %} {# 继承你的基础模板 #}
+{% load static %}
+
+{% block title %}支付成功{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="alert alert-success" role="alert">
+                <h4 class="alert-heading">支付成功！</h4>
+                <p>您的订单已成功支付。</p>
+                <hr>
+                {% if order %}
+                    <p><strong>订单号:</strong> {{ order.order_id }}</p>
+                    <p>感谢您的购买！</p>
+                    {# 您可以根据alipay_return_data显示更多信息，但注意安全 #}
+                    {# 例如：<p>支付宝交易号: {{ alipay_return_data.trade_no }}</p> #}
+                {% else %}
+                    <p>我们已收到您的支付信息，正在处理中。</p>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">接下来您可以：</h5>
+                    <ul>
+                        {% if order %}
+                            {# 链接到订单详情页 #}
+                            <li><a href="{% url 'order:detail' order_id_or_pk=order.order_id %}">查看订单详情</a></li>
+                        {% endif %}
+                        {# 如果您有专门的订单列表页 #}
+                        {# <li><a href="{% url 'order:list' %}">查看我的订单</a></li> #}
+                        {# 链接到首页 #}
+                        <li><a href="{% url 'home' %}">返回首页</a></li> {# 请确保你有一个名为 'home' 的 URL #}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

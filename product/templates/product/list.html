@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}商品列表{% endblock %}
+
+{% block extra_head %}
+<style>
+    h1 {
+        margin-top: 20px;
+    }
+
+    /* 搜索框样式，可以根据需要调整 */
+    .search-form-container {
+        margin-bottom: 20px; /* 搜索框与商品列表之间的间距 */
+        display: flex;
+        justify-content: center; /* 搜索框居中 */
+    }
+    .search-form-container form {
+        width: 100%; /* 表单宽度 */
+        max-width: 400px; /* 表单最大宽度 */
+    }
+   
+     .search-form-container .bi {
+        /* Bootstrap Icons 样式 */
+        margin-left: -30px; /* 使图标叠加在输入框上 */
+        z-index: 3; /* 确保图标在输入框之上 */
+        align-self: center; /* 垂直居中图标 */
+        /* pointer-events: none; 使图标不影响输入框的点击，根据实际情况来定，比如可以让搜索框里的图标不能使用 */
+        color: #ccc; /* 图标颜色 */
+    }
+
+
+    .product-list-container {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        /* 商品项之间的间距 */
+    }
+
+    .product-item {
+        width: calc(33.33% - 20px);
+        /* 每行显示三个商品，并考虑间距 */
+        border: 1px solid #ddd;
+        padding: 15px;
+        text-align: center;
+        /* 调整盒模型以包含边框和内边距 */
+        box-sizing: border-box;
+    }
+
+    /* 响应式调整：小屏幕设备每行显示一个商品 */
+    @media (max-width: 768px) {
+        .product-item {
+            width: 100%; /* 小屏幕每行一个商品 */
+        }
+    }
+
+    .product-image-container {
+        display: flex;
+        /* 启用FLEXBOX */
+        justify-content: center;
+        /* 水平居中子元素 */
+        align-items: center;
+        /* 垂直居中子元素 */
+        max-width: 100%;
+        height: auto; /* 允许高度自适应 */
+        margin-bottom: 10px;
+        /* 图片与信息之间的间距 */
+         /* 限制图片容器高度，避免过大图片撑开布局 */
+        max-height: 200px; /* 示例高度，根据实际情况调整 */
+        overflow: hidden; /* 隐藏溢出部分 */
+    }
+
+    .product-image {
+        display: block;
+        /* 移除图片底部的额外空间 */
+        max-width: 100%;
+        height: auto; /* 保持图片纵横比 */
+        object-fit: contain; /* 保持图片比例，适应容器 */
+    }
+
+    .product-info {
+        margin-top: 10px;
+    }
+
+    /* 可以根据需要添加更多样式 */
+    .page-content-wrapper{
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* 使分页和面包屑居中 */
+    }
+    .breadcrumb-section,.pagination{
+        margin-top: 20px;
+    }
+
+    /* 针对没有商品时的消息样式 */
+    .no-products-message {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 1.2em;
+        color: #666;
+    }
+
+    /* 添加此规则来改变搜索图标的光标样式 */
+    .search-icon-clickable {
+        cursor: pointer; /* 将光标样式设置为指针（手型） */
+    }
+</style>
+{% endblock %}
+
+{% block header %}{% endblock %} {# 如果头部有搜索框，此处可以保留为空或移除#}
+
+{% block content %}
+<h1 style="text-align:center;">商品列表</h1>
+
+{# 添加搜索表单 #}
+<div class="search-form-container">
+     {# 使用 method="get" 和 action 指向当前列表页面的 URL #}
+     {# 输入框 name="q" 用于将关键词作为 q 参数发送 #}
+     {# value="{{ search_query }}" 用于在搜索后填充输入框 #}
+    <form class="d-flex search-container" role="search" method="get">
+        <input class="form-control me-2" type="search" placeholder="搜索商品名称..." aria-label="Search" name="q" value="{{ search_query }}">
+        {# 给图标添加一个 class，方便 JS 选中 #}
+            <i class="bi bi-search search-icon-clickable"></i>
+        {# 如果需要一个可见的搜索按钮，可以添加： #}
+        {# <button class="btn btn-outline-success" type="submit">搜索</button> #}
+    </form>
+</div>
+
+
+{% if products %}
+    {# 显示搜索结果数量提示，如果进行了搜索 #}
+    {% if search_query %}
+         <p style="text-align:center;">
+            找到 {{ page_obj.paginator.count }} 件商品，匹配 "{{ search_query }}"。
+        </p>
+    {% else %}
+         <p style="text-align:center;">
+            共有 {{ page_obj.paginator.count }} 件商品。
+        </p>
+    {% endif %}
+
+    <div class="product-list-container">
+        {% for product in products %}
+        <div class="product-item">
+            <div class="product-image-container">
+                {% if product.image %}
+                {# 添加 onerror 属性，如果图片加载失败显示备用文本或图片 #}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" onerror="this.onerror=null; this.src="{% static 'images/weixin01.jpg' %}">
+                {% else %}
+                 {# 如果没有图片，显示一个占位符或者文字 #}
+                 <img src="{% static 'path/to/default_image.png' %}" alt="无图片" class="product-image">
+                {% endif %}
+            </div>
+            <div class="product-info">
+                {# 商品名称可以用链接包起来 #}
+                <h2><a href="{% url 'product:detail' pk=product.pk %}">{{ product.name }}</a></h2>
+                <p>价格: ¥{{ product.price|floatformat:2 }}</p> {# 格式化价格 #}
+                <p>库存: {{ product.stock }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    {# 如果没有商品，根据是否有搜索关键词显示不同的消息 #}
+    {% if search_query %}
+        <p class="no-products-message">
+            没有找到名称包含 "{{ search_query }}" 的商品。
+        </p>
+    {% else %}
+        <p class="no-products-message">
+            目前没有可用的商品。
+        </p>
+    {% endif %}
+{% endif %}
+
+<div class="page-content-wrapper">
+    <nav aria-label="breadcrumb" class="breadcrumb-section">
+        <ol class="breadcrumb">
+            {# 确保 home 的 URL 名称正确 #}
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">商品列表</li> {# 将“商品展示”改为“商品列表”更符合标题 #}
+        </ol>
+    </nav>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                {# 在分页链接中添加 ?q={{ search_query }} 来保留搜索状态 #}
+                <a href="?q={{ search_query }}&page=1">&laquo; 首页</a>
+                <a href="?q={{ search_query }}&page={{ page_obj.previous_page_number }}">上一页</a>
+            {% endif %}
+
+            <span class="current">
+                第 {{ page_obj.number }} 页，共 {{ paginator.num_pages }} 页
+            </span>
+
+            {% if page_obj.has_next %}
+                 {# 在分页链接中添加 ?q={{ search_query }} 来保留搜索状态 #}
+                <a href="?q={{ search_query }}&page={{ page_obj.next_page_number }}">下一页</a>
+                <a href="?q={{ search_query }}&page={{ paginator.num_pages }}">末页 &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{# 将二维码显示元素 HTML 和 JavaScript 放在这里 #}
+<script>
+    // 等待 DOM 内容完全加载
+    document.addEventListener('DOMContentLoaded', function() {
+        // 选中带有 search-icon-clickable class 的图标
+        const searchIcon = document.querySelector('.search-icon-clickable');
+
+        // 检查是否找到了图标
+        if (searchIcon) {
+            // 给图标添加点击事件监听器
+            searchIcon.addEventListener('click', function() {
+                // 找到最近的父级 form 元素
+                const form = searchIcon.closest('form');
+
+                // 如果找到了 form，就提交它
+                if (form) {
+                    form.submit();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

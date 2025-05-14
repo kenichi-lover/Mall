@@ -1,0 +1,44 @@
+{% extends 'base.html' %} {# 继承你的基础模板，通常是项目的 base.html #}
+{% load static %}
+
+{% block title %}支付失败{% endblock %} {# 设置页面标题 #}
+
+{% block content %} {# 定义页面主体内容块 #}
+
+<div class="container mt-5"> {# 使用 Bootstrap 类或其他 CSS 框架类，根据你的项目实际情况调整 #}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="alert alert-danger" role="alert"> {# 使用警告框样式 #}
+                <h4 class="alert-heading">支付失败！</h4>
+                <p>在处理您的订单支付时遇到问题。</p>
+
+                {# 检查视图函数是否传递了具体的错误信息，并显示它 #}
+                {% if error_message %}
+                    <hr> {# 分割线 #}
+                    <p class="mb-0">错误详情：{{ error_message }}</p> {# 显示视图传递的错误信息 #}
+                {% endif %}
+            </div>
+
+            <div class="card"> {# 添加一个卡片来包含操作链接 #}
+                <div class="card-body">
+                    <h5 class="card-title">接下来您可以：</h5>
+                    <p class="card-text">请检查您的支付信息或稍后重试。</p>
+                    <ul>
+                        {# 假设你的视图函数也把 order 对象或 order_id 传递了过来 #}
+                        {% if order %}
+                            {# 链接到订单详情页，可以从详情页再次尝试支付 #}
+                            <li><a href="{% url 'order:detail' order_id_or_pk=order.order_id %}">查看订单详情或重新尝试支付</a></li>
+                        {% endif %}
+                        {# 如果您有专门的订单列表页 #}
+                        {# <li><a href="{% url 'order:list' %}">查看我的订单</a></li> #}
+                        {# 链接到首页 #}
+                        <li><a href="{% url 'home' %}">返回首页</a></li> {# 请确保你有一个名为 'home' 的 URL #}
+                        <li>如果问题持续存在，请联系网站客服寻求帮助。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

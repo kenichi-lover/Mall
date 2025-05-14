@@ -1,0 +1,1121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}梧桐树下{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ===================================== */
+    /* Bootstrap 导航栏及自定义调整样式 */
+    /* ===================================== */
+    nav.navbar {
+        background-color: #f9f7f2;
+        /* 设置导航栏背景色 */
+        padding: 1px 0;
+    }
+
+    nav.navbar .container-fluid {
+        display: flex; /* **确保它是 Flex 容器** */
+        justify-content: center;
+        align-items: center; /* 保持垂直居中（Bootstrap 通常会默认设置） */
+        width: 100%;
+    }
+
+    .navbar-brand.logo img {
+        height: 80px;
+        width: 80px;
+        position: static;
+        left: auto;
+        transform: none;
+    }
+
+    /* 导航栏左侧和右侧容器的 Flexbox 调整 */
+    .nav-left,
+    .nav-right {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
+
+    .nav-left {
+        justify-content: center;
+        /* 确保内部元素靠左对齐 */
+    }
+
+    .nav-right {
+        justify-content: center;
+        /* 确保内部元素靠右对齐 */
+    }
+
+    /* 调整导航栏左右两侧下拉框、按钮、搜索框等元素的间距 */
+    .nav-left .dropdown {
+        margin: 0 10px;
+    }
+    .nav-right .dropdown {
+        margin: 0 20px;
+    }
+
+    .nav-right .search-container {
+        align-items: center;
+    }
+
+    /* 添加此规则来改变搜索图标的光标样式 */
+    .search-icon-clickable {
+        cursor: pointer; /* 将光标样式设置为指针（手型） */
+    }
+
+    /* ===================================== */
+    /* 视频区域样式 */
+    /* ===================================== */
+    #video {
+        display: block;
+        width: 1023px;
+        /* 固定宽度 */
+        margin: 40px auto;
+        /* 上下 40px 外边距，左右自动居中 */
+        position: relative;
+        /* 为绝对定位的文本叠层提供参考 */
+        border-radius: 10px;
+        /* 圆角半径 */
+        overflow: hidden;
+        /* 确保视频内容也裁剪到圆角内 */
+    }
+
+    #video video {
+        display: block;
+        /* 确保 video 元素是块级元素 */
+        width: 100%;
+        /* 宽度填充父容器 */
+        height: auto;
+        /* 保持宽高比 */
+    }
+
+    .video-overlay-text {
+        position: absolute;
+        /* 绝对定位叠层文本 */
+        top: 50%;
+        /* 垂直居中 */
+        left: 50%;
+        /* 水平居中 */
+        transform: translate(-50%, -50%);
+        /* 精确居中 */
+        color: aliceblue;
+        font-size: 20px;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        /* 文本阴影 */
+        padding: 10px;
+        text-align: center;
+        /* 确保叠层文本内部居中 */
+    }
+
+    .video-overlay-text a {
+        font-size: 24px;
+        /* 叠层文本中的链接字体大小 */
+    }
+
+    /* ===================================== */
+    /* 左右布局内容区域 (巧克力, 硅基) 样式 */
+    /* ===================================== */
+    .chocolate-section,
+    .Silicon-section {
+        display: flex;
+        /* 使用 Flexbox 实现左右布局 */
+        width: 1023px;
+        /* 固定宽度，和视频宽度一样 */
+        margin: 20px auto;
+        /* 水平居中整个 section */
+        align-items: stretch;
+        /* 让子容器在垂直方向上拉伸以占据相同高度 */
+        border: 1px solid #eee;
+        /* 可选：添加边框 */
+        border-radius: 8px;
+        /* 可选：添加圆角 */
+        background-color: #f9f9f9;
+        /* 可选：添加背景色 */
+        box-sizing: border-box;
+        /* 内边距和边框不增加总宽度 */
+    }
+
+    .image-container,
+    .Silicon-image-container {
+        flex: 0 0 50%;
+        /* 图片容器占据 50% 的宽度 */
+        display: flex;
+        justify-content: center;
+        /* 图片在其容器中水平居中 */
+        align-items: center;
+        /* 图片在其容器中垂直居中 */
+        padding: 20px;
+        /* 图片容器的内边距 */
+        box-sizing: border-box;
+        /* 内边距不增加总宽度 */
+    }
+
+    .image-container img,
+    .Silicon-image-container img {
+        max-width: 100%;
+        /* 确保图片不会超出容器宽度 */
+        max-height: 100%;
+        /* 确保图片不会超出容器高度 */
+        object-fit: contain;
+        /* 保持图片宽高比，并在容器内完整显示 */
+        display: block;
+        /* 移除图片底部的额外空间 */
+    }
+
+    .text-container,
+    .Silicon-text-container {
+        flex: 0 0 50%;
+        /* 文字容器占据 50% 的宽度 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* 标题和段落在其容器中垂直居中 */
+        /* align-items: center; */
+        /* 如果文字本身需要居中，保留此项 */
+        padding: 20px;
+        /* 文字容器的内边距 */
+        text-align: center;
+        /* 如果文字本身需要居中，保留此项 */
+        box-sizing: border-box;
+        /* 内边距不增加总宽度 */
+    }
+
+    /* 调整文本内容在其容器内的对齐方式，使其靠左 */
+    .text-container .chocolate-title,
+    .text-container .chocolate-description,
+    .Silicon-text-container .Silicon-title,
+    .Silicon-text-container .Silicon-description {
+        text-align: left;
+        /* 文字靠左对齐 */
+        /* 移除 flex-items 的 center 对齐，让文本自然靠左 */
+        align-self: flex-start;
+        /* 使此项靠左对齐 */
+        width: 100%;
+        /* 确保文本块宽度填充容器，如果需要 max-width，则在各自的规则中设置 */
+    }
+
+
+    .chocolate-title,
+    .Silicon-title {
+        font-size: 2em;
+        color: #333;
+        margin-bottom: 15px;
+        /* text-align: left; /* 已经在上面的组合选择器中设置 */
+    }
+
+    .chocolate-description,
+    .Silicon-description {
+        max-width: 400px;
+        /* 限制段落最大宽度 */
+        margin: 0 auto;
+        /* 保持 margin: auto 有助于在 text-container 宽度大于 max-width 时居中 */
+        /* text-align: left; /* 已经在上面的组合选择器中设置 */
+        line-height: 1.6;
+        color: #666;
+    }
+
+    /* ===================================== */
+    /* 最新商品区域样式 */
+    /* ===================================== */
+    .all-products-container {
+        width: 1023px;
+        /* 固定宽度 */
+        margin: 20px auto;
+        /* 上下外边距 20px，左右自动居中 */
+        padding: 0 20px;
+        /* 为内容添加内边距，防止内容紧贴边缘 */
+        box-sizing: border-box;
+        /* padding 不增加总宽度 */
+    }
+
+    /* Styles for each distinct seller's product list area */
+    .product-list-area-1,
+    .product-list-area-2 {
+        margin-bottom: 40px;
+        /* 在两个卖家商品区域之间添加间距 */
+        /* 可选：添加背景色、边框或阴影来区分区域 */
+    }
+
+    /* Styles for the seller name heading */
+    .product-list-area-1 h3,
+    /* 使用 h3 标签 */
+    .product-list-area-2 h3 {
+        margin-top: 0;
+        /* 移除默认顶部外边距 */
+        margin-bottom: 20px;
+        /* 卖家名称和商品列表之间添加间距 */
+        font-size: 1.5em;
+        /* 调整字体大小 */
+        color: #333;
+        /* 调整颜色 */
+        border-bottom: 1px solid #eee;
+        /* 可选：分隔线 */
+        padding-bottom: 10px;
+        /* 分割线和文字之间的间距 */
+        text-align: left;
+        /* 卖家名称靠左对齐 */
+    }
+
+    /* Styles for the container *within* each seller area that holds the product items */
+    .home-product-items-container {
+        display: flex;
+        /* 启用 Flexbox */
+        flex-wrap: wrap;
+        /* 允许项目换行 */
+        gap: 20px;
+        /* 设置项目之间的间隙 */
+        padding: 0;
+        /* 移除可能的默认内边距 */
+        list-style: none;
+        /* 如果内部是 ul/li，移除列表点 */
+        margin: 0;
+        /* 移除默认外边距 */
+        justify-content: center;
+        /* 如果项目数量不足填满一行，使其在容器中居中 */
+    }
+
+
+    /* --- Styles for individual product items --- */
+    .home-product-item {
+        flex-basis: calc(25% - 15px);
+        /* 计算每个项目的宽度，使其一行显示 4 个并考虑 gap */
+        flex-grow: 0;
+        /* 不拉伸 */
+        flex-shrink: 0;
+        /* 不收缩 */
+        box-sizing: border-box;
+        /* 内边距和边框不增加总尺寸 */
+        /* text-align: center; /* 项目内的文本（如商品名称）居中，可以移动到文本p标签 */
+    }
+
+    .home-product-item a {
+        text-decoration: none;
+        /* 移除链接下划线 */
+        color: inherit;
+        /* 链接文本继承父元素颜色 */
+        display: block;
+        /* 使链接填充整个商品项的顶部区域 */
+    }
+
+    .home-product-image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        /* 图片与文本之间的间距 */
+        width: 210px;
+        /* 固定宽度 */
+        height: 210px;
+        /* 固定高度 */
+        border-radius: 8px;
+        /* 圆角半径 */
+        overflow: hidden;
+        /* 隐藏超出圆角的部分 */
+    }
+
+    .home-product-image {
+        display: block;
+        width: 100%;
+        /* 宽度填充容器 */
+        height: 100%;
+        /* 高度填充容器 */
+        object-fit: cover;
+        /* 裁剪图片以填充整个容器，保持比例 */
+    }
+
+    .home-product-name,
+    .home-product-price {
+        text-align: center;
+        /* 确保商品名称和价格居中 */
+    }
+
+    .home-product-name {
+        font-size: 1em;
+        color: #333;
+        margin-top: 5px;
+        margin-bottom: 0;
+        line-height: 1.3;
+    }
+
+    .home-product-price {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 5px;
+        margin-bottom: 0;
+        line-height: 1.2;
+    }
+
+    .home-product-image-container p {
+        text-align: center;
+        padding: 20px;
+        border: 1px dashed #ccc;
+        display: flex;
+        /* 使用 flexbox 居中文本 */
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        /* 宽度填充容器 */
+        height: 100%;
+        /* 高度填充容器 */
+        box-sizing: border-box;
+        /* 内边距和边框不增加总尺寸 */
+        color: #999;
+        /* 文本颜色 */
+        font-size: 0.9em;
+    }
+
+    /* ===================================== */
+    /* 邮件订阅模块样式 */
+    /* ===================================== */
+    .email-subscription-section {
+        width: 1023px;
+        /* 与其他主要内容区域宽度一致 */
+        margin: 40px auto;
+        /* 上下边距40px，左右自动居中 */
+        padding: 40px 20px;
+        /* 内部上下边距40px，左右20px */
+        border: 1px solid #e0e0e0;
+        /* 边框颜色与图片类似 */
+        border-radius: 8px;
+        /* 圆角 */
+        text-align: center;
+        /* 内部元素居中 */
+        background-color: #fff;
+        /* 背景色 */
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+        /* 内边距和边框不增加总宽度 */
+    }
+
+    .email-icon {
+        font-size: 2.5em;
+        /* 图标大小 */
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .email-heading {
+        font-size: 1.8em;
+        /* 标题字体大小 */
+        color: #333;
+        margin-bottom: 25px;
+        font-weight: normal;
+    }
+
+    .email-form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 450px;
+        /* 限制表单容器最大宽度 */
+        margin: 0 auto 20px auto;
+        /* 上下边距20px，左右居中 */
+        border: 1px solid #ccc;
+        /* 输入框和按钮的外部边框 */
+        border-radius: 5px;
+        /* 轻微圆角 */
+        overflow: hidden;
+        /* 确保子元素圆角效果 */
+    }
+
+    .email-input {
+        flex-grow: 1;
+        /* 输入框占据剩余空间 */
+        padding: 12px 15px;
+        border: none;
+        /* 移除默认边框 */
+        font-size: 1em;
+        outline: none;
+        /* 移除点击时的轮廓 */
+    }
+
+    .email-input::placeholder {
+        color: #999;
+    }
+
+    .email-submit-button {
+        padding: 12px 25px;
+        border: none;
+        /* 移除默认边框 */
+        background-color: #f0f0f0;
+        /* 按钮背景色 */
+        color: #333;
+        font-size: 1em;
+        cursor: pointer;
+        border-left: 1px solid #ccc;
+        /* 按钮左侧的分割线 */
+        white-space: nowrap;
+        /* 防止按钮文字换行 */
+    }
+
+    .email-submit-button:hover {
+        background-color: #e0e0e0;
+        /* 鼠标悬停效果 */
+    }
+
+    .email-subtext {
+        font-size: 0.9em;
+        color: #777;
+    }
+
+    /* ===================================== */
+    /* 底部信息样式 */
+    /* ===================================== */
+    .footer-info {
+        text-align: center;
+        /* 文本居中 */
+        padding: 20px 0;
+        /* 上下内边距 */
+        margin-top: 30px;
+        /* 与上方内容的间距 */
+        font-size: 0.9em;
+        /* 字体大小 */
+        color: #555;
+        /* 字体颜色 */
+        border-top: 1px solid #eee;
+        /* 顶部细分隔线 */
+        width: 1023px;
+        /* 与其他主要内容区域宽度一致 */
+        margin-left: auto;
+        /* 水平居中 */
+        margin-right: auto;
+        /* 水平居中 */
+        box-sizing: border-box;
+        /* 内边距和边框不增加总宽度 */
+    }
+
+    .footer-info p {
+        margin: 0;
+        /* 移除段落默认的上下边距 */
+    }
+
+    .footer-link-placeholder {
+        text-decoration: underline;
+        /* 用于模拟链接的下划线样式 */
+        cursor: pointer;
+        /* 如果希望它看起来像可点击的 */
+    }
+
+    /* ===================================== */
+    /* 面包屑样式 (修复居中问题) */
+    /* ===================================== */
+    .breadcrumb-section {
+        max-width: 1023px;
+        /* 限制面包屑容器的最大宽度，可以与主要内容宽度一致 */
+        margin: 20px auto;
+        /* 上下外边距 20px，左右外边距 auto 自动居中 */
+        padding: 0 15px;
+        /* 可选：增加左右内边距 */
+        box-sizing: border-box;
+        /* 确保 padding 不增加总宽度 */
+    }
+
+    /* 使面包屑列表项在容器内部居中 (Bootstrap 的 .breadcrumb 是 Flexbox) */
+    .breadcrumb-section .breadcrumb {
+        justify-content: center;
+        /* 使 Flex 子项（li）在主轴（水平）方向居中 */
+    }
+
+    /* ===================================== */
+    /* 二维码显示浮层样式 */
+    /* ===================================== */
+
+    /* 父容器需要相对定位，以便子元素的绝对定位 */
+    .dropdown {
+        position: relative;
+        display: inline-block; /* 让div包裹内容，不会占满整行 */
+        cursor: pointer; /* 鼠标悬停时显示手形光标 */
+    }
+
+    /* 二维码图片的容器，默认隐藏 */
+    .qrcode-container {
+        margin-top: 10px;
+        display: none; /* 默认隐藏 */
+        position: absolute; /* 绝对定位 */
+        top: 100%; /* 出现在文本下方 */
+        background-color: white; /* 背景色，避免图片透明导致下方内容透出 */
+        z-index: 1; /* 确保显示在其他内容之上 */
+        width: 150px; /* 例如：设置一个固定的宽度 */
+        height: 150px; /* 例如：设置一个固定的高度 */
+    }
+
+    /* 当鼠标悬停在 .dropdown 上时，显示 .qrcode-container */
+    .dropdown:hover .qrcode-container {
+        display: block; /* 鼠标悬停时显示 */
+    }
+
+    /* 确保图片在容器内正常显示 */
+    .qrcode-container img {
+        display: block; /* 防止图片下方出现空白 */
+        width: 100%; /* 图片宽度占满父容器 */
+        height: 100%; /* 图片高度占满父容器 */
+    }
+    /* ===================================== */
+    /* 媒体查询 (根据需要调整断点和样式) */
+    /* ===================================== */
+    @media (max-width: 1200px) {
+
+        /* 在宽度小于 1200px 时调整主要内容宽度 */
+        #video,
+        .chocolate-section,
+        .Silicon-section,
+        .all-products-container,
+        .email-subscription-section,
+        .footer-info {
+            width: 95%;
+            /* 使用百分比宽度，更具响应性 */
+            margin: 20px auto;
+            /* 保持居中，调整上下间距 */
+            padding: 0 15px;
+            /* 调整内边距 */
+            box-sizing: border-box;
+        }
+
+        .breadcrumb-section {
+            max-width: 95%;
+            /* 保持与主要内容宽度一致 */
+            margin: 20px auto;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        .nav-left {
+            margin-left: 15px;
+            /* 调整导航栏左侧间距 */
+        }
+
+        .nav-right {
+            margin-right: 15px;
+            /* 调整导航栏右侧间距 */
+        }
+
+        /* 如果需要，调整左右布局的 flex-basis */
+        .image-container,
+        .Silicon-image-container,
+        .text-container,
+        .Silicon-text-container {
+            flex-basis: 50%;
+            /* 保持 50% 布局 */
+            padding: 15px;
+        }
+
+        /* 调整商品列表项宽度 */
+        .home-product-item {
+            flex-basis: calc(25% - 15px);
+            /* 保持一行 4 个 */
+        }
+
+        .home-product-image-container {
+            width: 180px;
+            /* 调整商品图片容器尺寸 */
+            height: 180px;
+        }
+
+        .home-product-name,
+        .home-product-price {
+            font-size: 0.9em;
+            /* 调整商品文字大小 */
+        }
+
+    }
+
+
+    @media (max-width: 768px) {
+
+        /* 在移动设备上调整布局和字体 */
+        .nav-left,
+        .nav-right {
+            margin-left: 0;
+            margin-right: 0;
+            /* 导航栏左右容器占满宽度，内容根据 navbar-expand-lg 收缩 */
+            /* align-items: flex-start; */
+            /* 可以根据需要调整垂直对齐 */
+        }
+
+        .nav-left .dropdown,
+        .nav-right .dropdown,
+        .nav-left .login-button,
+        .nav-right .login-button,
+        .nav-left .search-container,
+        .nav-right .search-container,
+        .nav-right a,
+        .nav-right form {
+            margin: 5px 10px;
+            /* 调整元素间距 */
+        }
+
+        .navbar-brand.logo img {
+            height: 60px;
+            /* 调整 LOGO 大小 */
+            width: 60px;
+        }
+
+
+        /* 左右布局改为上下堆叠 */
+        .chocolate-section,
+        .Silicon-section {
+            flex-direction: column;
+            /* 改为垂直排列 */
+            width: 95%;
+            /* 使用百分比宽度 */
+        }
+
+        .image-container,
+        .Silicon-image-container,
+        .text-container,
+        .Silicon-text-container {
+            flex-basis: auto;
+            /* 子容器高度自适应 */
+            width: 100%;
+            /* 宽度占满父容器 */
+            padding: 15px 10px;
+            /* 调整内边距 */
+        }
+
+        .text-container .chocolate-title,
+        .text-container .chocolate-description,
+        .Silicon-text-container .Silicon-title,
+        .Silicon-text-container .Silicon-description {
+            align-self: center;
+            /* 使文本内容在垂直布局中居中 */
+            text-align: center;
+            /* 文字居中 */
+        }
+
+        .video-overlay-text {
+            font-size: 16px;
+            /* 调整视频叠层字体大小 */
+        }
+
+        .video-overlay-text a {
+            font-size: 20px;
+        }
+
+        /* 调整商品列表列数，例如一行 2 个 */
+        .home-product-item {
+            flex-basis: calc(50% - 10px);
+            /* 一行 2 个，考虑 20px 的 gap */
+            /* calc(100% / 2 - gap/2) = calc(50% - 10px) */
+        }
+
+        .home-product-image-container {
+            width: 150px;
+            /* 调整商品图片容器尺寸 */
+            height: 150px;
+        }
+
+        .home-product-name,
+        .home-product-price {
+            font-size: 0.9em;
+            /* 调整商品文字大小 */
+        }
+
+        .email-subscription-section,
+        .footer-info {
+            width: 95%;
+            /* 宽度占满 */
+            padding: 20px 10px;
+            /* 调整内边距 */
+        }
+
+        .email-heading {
+            font-size: 1.5em;
+            /* 调整订阅标题大小 */
+        }
+
+        .email-form-container {
+            flex-direction: column;
+            /* 表单输入框和按钮上下堆叠 */
+            max-width: 300px;
+            /* 调整最大宽度 */
+        }
+
+        .email-input {
+            width: 100%;
+            /* 输入框宽度占满 */
+            margin-bottom: 10px;
+            /* 输入框下方间距 */
+            border-right: none;
+            /* 移除输入框右侧的分割线 */
+            border-bottom: 1px solid #ccc;
+            /* 添加底部边线 */
+        }
+
+        .email-submit-button {
+            width: 100%;
+            /* 按钮宽度占满 */
+            border-left: none;
+            /* 移除按钮左侧的分割线 */
+        }
+
+    }
+
+
+    @media (max-width: 480px) {
+        /* 更小的屏幕调整 */
+
+        .home-product-item {
+            flex-basis: 100%;
+            /* 一行 1 个 */
+        }
+
+        .home-product-image-container {
+            width: 200px;
+            /* 调整商品图片容器尺寸 */
+            height: 200px;
+        }
+
+        .email-heading {
+            font-size: 1.2em;
+            /* 调整订阅标题大小 */
+        }
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+{# 导航栏 HTML 保持不变 #}
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <div class="nav-left d-flex align-items-center">
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="bi bi-houses"></i>商店
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'user:about'%}">我吃巧克力</a></li>
+                    <li><a class="dropdown-item" href="{% url 'user:about_ai'%}">硅基密卷</a></li>
+                    <li><a class="dropdown-item" href="{% url 'user:about_secret'%}">悖论编码局</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="bi bi-chat-square-heart"></i>动态
+                </button>
+                <ul class="dropdown-menu">
+                    {% if user.is_authenticated %}
+                        <li><a class="dropdown-item" href="{% url 'event:user_events' username='我吃巧克力' %}">我吃巧克力</a></li>
+                        <li><a class="dropdown-item" href="{% url 'event:user_events' username='硅基密卷' %}">硅基密卷</a></li>
+                        <li><a class="dropdown-item" href="{% url 'event:user_events' username='悖论编码局' %}">悖论编码局</a></li>
+                    {% endif %}
+
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="bi bi-cup-hot"></i>社区
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="https://www.bilibili.com/" target="_blank">影视</a></li> {# target="_blank"打开新的网页 #}
+                    <li><a class="dropdown-item" href="https://www.eastmoney.com" target="_blank">财经</a></li>
+                    <li><a class="dropdown-item" href="https://www.hongxiu.com" target="_blank">小说</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="navbar-brand logo">
+            <img src="{% static 'images/logo.png' %}" alt="您的网站 Logo">
+        </div>
+
+
+        <div class="nav-right d-flex align-items-center">
+            <div class="dropdown">
+                <span><i class="bi bi-arrow-through-heart"></i>站长</span>
+                <div class="qrcode-container">
+                    <img src="{% static 'images/weixin01.jpg' %}" alt="站长二维码">
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+            {# 使用 d-flex 和 align-items-center 包裹，与旁边的 dropdown 保持垂直对齐 #}
+            <div class="d-flex align-items-center">
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    {{user.username}}
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'product:create' %}">商品上架</a></li>
+                    <li><a class="dropdown-item" href="{% url 'event:event_create' %}">活动发布</a></li>
+                </ul>
+                <form action="{% url 'user:logout' %}" method="post" style="display: inline; margin: 0;"> {#移除行内样式，使用margin 类控制 #}
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0" style="vertical-align: middle;margin-left: 10px;">
+                        <i class="bi bi-person-lock"></i>
+                    </button>
+                </form>
+                </div>
+                
+            </div> {# 结束包裹 authenticated 用户信息的 div #}
+            {% else %}
+            <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" class="d-flex align-items-center"> {# 添加d-flex 和 align-items-center 对齐图标 #}
+                <i class="bi bi-person"></i>
+            </a>
+            {%endif%}
+
+            <form class="d-flex ms-3 search-container" role="search" method="get" action="{% url 'product:list' %}"> {# 添加 role="search" #}
+                <input class="form-control me-2" type="search" placeholder="搜索" aria-label="Search" name="q" value="{{ request.GET.q|default:'' }}">
+                {# 给图标添加一个 class，方便 JS 选中 #}
+                <i class="bi bi-search search-icon-clickable"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+{# 视频区域 #}
+<div id="video">
+    <video controls width="1023" height="756">
+        <source src="{% static 'images/1111.mp4' %}" type="video/mp4">
+    </video>
+    <div class="video-overlay-text">
+        清醒的沉溺，只为一口纯粹的自由。<br><br>
+        爱，从入口即化开始。
+        {# 这里的链接建议也加上 class="btn btn-link" 或其他样式，让它看起来像个按钮或链接 #}
+        <a href="{% url 'user:about' %}" style="color: inherit; text-decoration: none;"> {# 链接到我吃巧克力页面 #}
+            <i class="bi bi-box-arrow-in-right"></i> 我吃巧克力
+        </a>
+    </div>
+</div>
+
+{# 登录模态框，通常放在 body 的最末尾 #}
+{% include 'user/login.html' %}
+
+{% endblock %}
+
+{% block content %}
+{# 巧克力的广告文本#}
+<div class="chocolate-section">
+    <div class="image-container">
+        <img src="{% static 'images/009.webp'%}" alt="巧克力">
+    </div>
+    <div class="text-container">
+        <h2 class="chocolate-title" style="text-align: center;">独一无二的巧克力</h2>
+        <p class="chocolate-description">
+            我们的巧克力香气扑鼻、风味绝佳，它们是由最优质的天然原料精心手工制作而成的。今天就来体验一下“传承”巧克力那奢华的风味吧。
+            {# 这里的链接建议也加上 class="btn btn-link" 或其他样式 #}
+            <a href="{% url 'user:about' %}" style="color: inherit; text-decoration: none;"> {# 链接到我吃巧克力页面#}
+                <i class="bi bi-box-arrow-in-right"></i> 我吃巧克力
+            </a>
+        </p>
+    </div>
+</div>
+
+{# *** 这里是展示最新商品的区域 *** #}
+<h2 style="text-align:center; margin-top: 40px; margin-bottom: 20px;">最新商品 <i class="bi bi-cart4"></i></h2>
+<div class="all-products-container">
+
+    {# ============ 第一个特色卖家商品区 ============ #}
+    <div class="product-list-area-1">
+        {# 检查是否存在第一个卖家并且他有商品 #}
+        {% if seller1 and seller1_products %}
+        <h3>{{ seller1.name }} <i class="bi bi-chat-square-heart-fill"></i></h3>
+        <div class="home-product-items-container"> {# 包裹商品项的容器，使用 Flexbox CSS #}
+            {% for product in seller1_products %}
+            <div class="home-product-item">
+                {# 这里的链接应该指向商品详情页，而不是列表页 #}
+                <a href="{% url 'product:list' %}">
+                    <div class="home-product-image-container">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="home-product-image">
+                        {% else %}
+                        <p>暂无图片</p> {# 占位文本，使用 CSS #}
+                        {% endif %}
+                    </div>
+                </a>
+                <p class="home-product-name">{{ product.name }}</p>
+                <p class="home-product-price">售价: {{ product.price }}</p>
+            </div>
+            {% endfor %} {# 第一个卖家商品循环结束 #}
+        </div> {# home-product-items-container 结束 #}
+        {% else %}
+        <p>DEBUG: No data for Seller 1 or Seller 1 has no products.</p>
+        <p>目前没有特色卖家商品可展示。</p> {# 如果没有找到第一个卖家或他没有商品 #}
+        {% endif %}
+    </div> {# product-list-area-1 结束 #}
+
+    {% comment %} 在两个展示区之间添加分隔线，只有当两个区域都有内容时显示 {% endcomment %}
+    {% if seller1 and seller1_products and seller2 and seller2_products %}
+    <hr> {# 使用 CSS 定义 hr 的样式 #}
+    {% endif %}
+
+
+    {# ============ 第二个特色卖家商品区 ============ #}
+    <div class="product-list-area-2">
+        {# 检查是否存在第二个卖家并且他有商品 #}
+        {% if seller2 and seller2_products %}
+        <h3>{{ seller2.name }} <i class="bi bi-chat-square-heart-fill"></i></h3>
+        <div class="home-product-items-container">
+            {% for product in seller2_products %}
+            <div class="home-product-item">
+                {# 这里的链接应该指向商品详情页，不是列表页 #}
+                <a href="{% url 'product:list' %}">
+                    <div class="home-product-image-container">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="home-product-image">
+                        {% else %}
+                        <p>暂无图片</p> {# 占位文本，使用 CSS #}
+                        {% endif %}
+                    </div>
+                </a>
+                <p class="home-product-name">{{ product.name }}</p>
+                <p class="home-product-price">售价: {{ product.price }}</p>
+            </div>
+            {% endfor %} {# 第二个卖家商品循环结束 #}
+        </div> {# home-product-items-container 结束 #}
+        {% else %}
+        <p>DEBUG: No data for Seller 2 or Seller 2 has no products.</p>
+        {% comment %} 如果第一个卖家有内容，但第二个没有，显示特定提示 {% endcomment %}
+        {% if seller1 and seller1_products %}
+        <p>目前没有第二个特色卖家的商品可展示。</p>
+        {% endif %}
+        {# 如果两个卖家都没有找到，第一个区域的提示已经足够了 #}
+        {% endif %}
+    </div> {# product-list-area-2 结束 #}
+
+    {# 如果两个区域都没有展示内容，可以添加一个总的提示 #}
+    {% if not seller1_products and not seller2_products %}
+    <p>DEBUG: Neither seller section displayed content.</p>
+    {% comment %} {% <p>目前没有可供展示的特色商品。</p> %} {% endcomment %}
+    {% endif %}
+
+
+</div> {# all-products-container 结束 #}
+
+
+{# 硅基密卷的广告文本 #}
+<div class="Silicon-section">
+    <div class="Silicon-image-container">
+        <img src="{% static 'images/2002.jpg'%}" alt="硅基爱人">
+    </div>
+    <div class="Silicon-text-container">
+        <h2 class="Silicon-title" style="text-align: center;">未来已来 触手可及</h2>
+        <p class="Silicon-description">
+            云端数据库实时更新，越用越懂你，从执行者进阶为“策略伙伴”！
+            不止是工具，更是人类迈向星辰大海的“超能盟友”！
+            {# 这里的链接建议也加上 class="btn btn-link" 或其他样式 #}
+            <a href="{% url 'user:about_ai' %}" style="color: inherit; text-decoration: none;"> {# 链接到硅基密卷页面#}
+                <i class="bi bi-box-arrow-in-right"></i> 硅基密卷
+            </a>
+        </p>
+    </div>
+</div>
+
+{# 邮件订阅模块 #}
+<div class="email-subscription-section">
+    <div class="email-icon">
+        <i class="bi bi-send"></i>
+    </div>
+    <h2 class="email-heading">获取产品、活动及特别优惠的最新信息</h2>
+
+    {# 可选：显示 Django messages #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form action="{% url 'myemail:send_email' %}" method="post">
+        {% csrf_token %}
+        <div class="email-form-container"> {# 确保这个 div 在 form 内部 #}
+            <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
+            <button type="submit" class="email-submit-button">发送</button>
+        </div>
+    </form>
+    <p class="email-subtext">千万不要错过最新的“梧桐树下”新闻！</p>
+</div>
+
+{# 底部信息 #}
+<div class="footer-info">
+    <p>Copyright &copy; 2025 <span class="footer-link-placeholder">梧桐树下</span>.<span
+            class="footer-link-placeholder">Powered by Alice</span></p>
+</div>
+
+{# 登录模态框，通常放在 body 的最末尾，这里放在 content block 结束后也可以 #}
+{# {% include 'user/login.html' %} #} {# 考虑到 login.html 可能包含 id="id_username"，如果 base.html 已经包含了模态框，这里可能不需要再次包含 #}
+
+{# ... 您的首页其他内容，包括邮件订阅模块 ... #}
+{# 这个块用于显示 Django messages，JavaScript 会读取这里的内容 #}
+{# 请确保您的 base.html 或 home.html 中有这部分代码来显示 messages #}
+{# 我们可以将这个列表隐藏起来，只通过 JS 弹窗显示 #}
+{% if messages %}
+    {# 添加一个 ID，方便 JavaScript 选中 #}
+    <ul id="message-list" style="display: none;"> {# 默认隐藏这个列表 #}
+        {% for message in messages %}
+            {# 在 li 标签上存储 message 的 tag，方便 JS 判断消息类型 #}
+            <li data-tag="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{# 将二维码显示元素 HTML 和 JavaScript 放在这里 #}
+<script>
+    // 等待 DOM 内容完全加载
+    document.addEventListener('DOMContentLoaded', function() {
+        // 选中带有 search-icon-clickable class 的图标
+        const searchIcon = document.querySelector('.search-icon-clickable');
+
+        // 检查是否找到了图标
+        if (searchIcon) {
+            // 给图标添加点击事件监听器
+            searchIcon.addEventListener('click', function() {
+                // 找到最近的父级 form 元素
+                const form = searchIcon.closest('form');
+
+                // 如果找到了 form，就提交它
+                if (form) {
+                    form.submit();
+                }
+            });
+        }
+    });
+
+    //在这里添加 JavaScript 代码来处理 messages 
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // 选中存储 messages 的隐藏列表
+        const messageList = document.getElementById('message-list');
+
+        if (messageList) {
+            // 获取列表中的所有消息 li 元素
+            const messages = messageList.querySelectorAll('li');
+
+            // 遍历每条消息
+            messages.forEach(function(message) {
+                // 获取消息的 tag (success, error, warning, info)
+                const tag = message.getAttribute('data-tag');
+                // 获取消息的文本内容
+                const text = message.textContent;
+
+                // 检查是否是成功消息
+                if (tag === 'success') {
+                    // 使用浏览器的内置 alert 函数弹出对话框
+                    alert(text);
+                }
+                // 如果需要，您可以添加处理其他类型消息的逻辑
+                // else if (tag === 'error') {
+                //     alert("错误：" + text);
+                // }
+                // else if (tag === 'warning') {
+                //     alert("警告：" + text);
+                // }
+                // else if (tag === 'info') {
+                //     alert("提示：" + text);
+                // }
+            });
+
+            // Django 的 messages 框架默认在消息被显示一次后就会清除它们，
+            // 所以通常不需要额外的 JavaScript 代码来手动清除消息，除非您有特殊需求。
+        }
+    });
+</script>
+{% endblock %}

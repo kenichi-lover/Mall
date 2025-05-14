@@ -1,0 +1,194 @@
+{# send_email.html #}
+{% extends 'base.html' %} {# 继承您的基础模板 #}
+{% load static %} {# 如果模板中需要加载静态文件，需要加载此标签 #}
+
+{# 注意：根据您的要求，移除了 {% load crispy_forms_tags %} #}
+
+
+{% block title %}发送邮件{% endblock %} {# 页面的标题 #}
+
+{% block extra_head %}
+    {# 在这里添加或修改页面特有的 CSS 样式 #}
+    <style>
+        /* 用于带有简单边框、内边距和水平居中的块的通用样式 */
+        .bordered-centered-block {
+            max-width: 500px; /* 限制块的最大宽度 */
+            margin: 20px auto; /* 上下外边距 20px，左右自动，实现水平居中 */
+            padding: 15px; /* 块内部的内边距 */
+            border: 1px solid #ddd; /* 简单的边框样式 */
+            background-color: #fff; /* 白色背景 */
+            /* 确保块内部的文本和内联块元素居中 */
+            text-align: center;
+        }
+
+
+        /* 图片样式，根据您的要求，保持原有的边框和内边距 */
+        .image-block img {
+            /* 保持原有的图片样式 */
+            display: block; /* 使图片成为块级元素 */
+            margin: 0 auto; /* 块级元素可以通过自动外边距居中 */
+            max-width: 100%; /* 确保图片不超过容器宽度 */
+            height: auto; /* 保持图片比例 */
+            border: 1px solid #ccc; /* 图片自身的边框样式 (保持不变) */
+            padding: 5px; /* 图片内容与边框之间的内边距 (保持不变) */
+        }
+
+        /* 文字和表单块的样式 */
+        .text-form-block {
+             /* 继承 bordered-centered-block 的居中和边框 */
+             margin-top: 10px; /* 在图片块下方添加一些垂直间距 */
+             /* 文本和内容居中已由 bordered-centered-block 的 text-align: center 处理 */
+        }
+
+
+        /* 标题样式 */
+        .email-heading {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #333;
+            /* text-align: center; /* 由父元素 .bordered-centered-block 控制 */
+        }
+
+        /* 表单容器样式（Flexbox 布局） */
+        /* 用于控制输入框和按钮的布局 */
+        .email-form-container {
+            display: flex; /* 使用 Flexbox 布局 */
+            gap: 10px; /* 子元素间距 */
+            margin-bottom: 20px; /* 下方留白 */
+            align-items: center; /* 垂直居中对齐 */
+             /* Flexbox 容器本身在其父容器 .bordered-centered-block (text-align: center) 内居中 */
+            max-width: 400px; /* 限制表单容器宽度 */
+            margin-left: auto; /* 自动外边距实现自身水平居中 */
+            margin-right: auto;
+        }
+
+        /* 输入框样式 */
+        .email-form-container input[type="email"] {
+            flex-grow: 1; /* 填充可用空间 */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        /* 提交按钮样式 */
+        .email-form-container .email-submit-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .email-form-container .email-submit-button:hover {
+            background-color: #0056b3;
+        }
+
+
+
+        /* 错误列表样式 */
+        .errorlist {
+            color: red;
+            list-style: none;
+            padding: 0;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            text-align: left; /* 错误文本左对齐 */
+             /* 错误列表在其父容器 .bordered-centered-block 内居中 */
+             max-width: 400px; /* 与表单容器宽度一致 */
+             margin-left: auto;
+             margin-right: auto;
+        }
+
+        /* Django messages 列表样式 */
+        .messages {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            text-align: left; /* 消息文本左对齐 */
+             /* messages 列表在其父容器 .bordered-centered-block 内居中 */
+             max-width: 400px; /* 与表单容器宽度一致 */
+             margin-left: auto;
+             margin-right: auto;
+        }
+        .messages li { margin-bottom: 5px; }
+        .messages .success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .messages .error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .no-bullet-list { list-style: none; padding: 0; }
+
+        /* 用于在不影响屏幕阅读器的情况下隐藏元素的通用类 */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    {# 第一个块：包含图片，有边框，居中，上下结构中的上方部分 #}
+    <div class="bordered-centered-block image-block">
+        {# 图片本身，根据您的要求保持原有的边框和样式 #}
+        <img src="{% static 'images/weixin01.jpg' %}" alt="二维码">
+    </div>
+
+    {# 第二个块：包含文字、消息、表单（以及可能的下方文本），有边框，居中，上下结构中的下方部分 #}
+    <div class="bordered-centered-block text-form-block">
+        <h2 class="email-heading">发送邮件</h2> {# 您提供的标题 #}
+
+        {# 显示 Django messages #}
+        {% if messages %}
+            <ul class="messages no-bullet-list">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {# 表单结构 #}
+        <form method="post"> {# action 属性可以省略，会提交到当前 URL #}
+            {% csrf_token %}
+
+            {# 这个 div 使用 Flexbox 来控制输入框和按钮的布局，并自身居中 #}
+            <div class="email-form-container">
+                {# 邮箱输入框和按钮直接放在 Flex 容器内 #}
+                <label for="{{ form.email.id_for_label }}" class="visually-hidden">{{ form.email.label }}</label>
+                {{ form.email }} {# 会渲染 <input type="email" name="email" ...> 标签 #}
+
+                <button type="submit" class="email-submit-button">发送</button>
+            </div>
+
+            {# 显示字段错误和非字段错误列表，并居中 #}
+            {% if form.email.errors %}
+                <ul class="errorlist">
+                    {% for error in form.email.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </form>
+
+
+    </div> {# 关闭 bordered-centered-block text-form-block #}
+
+{% endblock %}
+
+{% block extra_js %}
+    {# 如果这个页面需要额外的 JavaScript，可以在这里添加 script 标签 #}
+{% endblock %}

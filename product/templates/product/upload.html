@@ -1,0 +1,95 @@
+{% extends 'base.html' %} {# 继承 base.html #}
+{% load static %}
+
+{% block title %}发布新商品{% endblock %} {# 页面标题 #}
+
+{% block extra_head %}{% endblock %}
+
+{# 将表单内容放到主要的 content block 里 #}
+
+{% block content %}
+
+<div class="container mt-4"> {# 使用 Bootstrap 的 container 类来限制内容宽度并居中 #}
+    <div class="row justify-content-center"> {# 使用 row 和 justify-content-center 让列居中 #}
+        <div class="col-md-8"> {# 使用 col-md-8 来限制表单区域的宽度 #}
+            <div class="card"> {# 可选：使用 Bootstrap 的 card 组件让表单区域有边框和阴影 #}
+                <div class="card-header">
+                    <h3>发布新商品</h3> {# 表单标题 #}
+                </div>
+                <div class="card-body">
+                    {# 表单标签必须包含 enctype="multipart/form-data" 如果有文件上传字段 #}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %} {# Django CSRF 保护标签 #}
+
+                        {# *** 渲染完整的表单字段 *** #}
+
+                        {# 方式一：最简单的渲染整个表单为一个一个的 <p> 标签 #}
+                            {# 这会显示所有字段和它们的错误信息 #}
+                            {# {{ form.as_p }} #}
+
+                            {# 方式二：手动渲染每个字段，以便更好地控制布局和应用 CSS 类 #}
+                            {# 推荐这种方式，可以根据你的 HTML/CSS 框架进行排版 #}
+
+                            {# 示例：使用 Bootstrap 的 form-group 类和 form-label, form-control 类 #}
+
+                        <div class="mb-3"> {# 一个表单组，mb-3 添加下边距 #}
+                            <label for="{{ form.name.id_for_label }}" class="form-label">商品名称:</label> {# label 标签 #}
+                            {{ form.name }} {# 渲染商品名称输入框 #}
+                            {% if form.name.errors %}{% for error in form.name.errors %}<div class="text-danger small">
+                                {{ error }}</div>{% endfor %}{% endif %} {# 显示字段错误信息 #}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">商品描述:</label>
+                            {{ form.description }} {# 渲染商品描述文本域 #}
+                            {% if form.description.errors %}{% for error in form.description.errors %}<div
+                                class="text-danger small">{{ error }}</div>{% endfor %}{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.price.id_for_label }}" class="form-label">商品价格:</label>
+                            {{ form.price }} {# 渲染商品价格输入框 #}
+                            {% if form.price.errors %}{% for error in form.price.errors %}<div
+                                class="text-danger small">{{ error }}</div>{% endfor %}{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.stock.id_for_label }}" class="form-label">库存数量:</label>
+                            {{ form.stock }} {# 渲染商品库存输入框 #}
+                            {% if form.stock.errors %}{% for error in form.stock.errors %}<div
+                                class="text-danger small">{{ error }}</div>{% endfor %}{% endif %}
+                        </div>
+
+                        {# 如果你的 ProductForm 包含名为 'image' 的 ImageField #}
+                        {% if form.image %} {# 检查表单中是否有 image 字段 #}
+                        <div class="mb-3">
+                            <label for="{{ form.image.id_for_label }}" class="form-label">商品图片:</label>
+                            {{ form.image }} {# 渲染文件上传输入框 #}
+                            {% if form.image.errors %}{% for error in form.image.errors %}<div
+                                class="text-danger small">{{ error }}</div>{% endfor %}{% endif %}
+                        </div>
+                        {% endif %}
+
+                        {# 方式三：使用 django-crispy-forms 插件 (需要先安装和配置) #}
+                        {# {% crispy form %} #}
+
+                        {# 显示非字段错误 (与任何特定字段无关的表单错误) #}
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+
+                        {# 提交按钮 #}
+                        <button type="submit" class="btn btn-primary">发布商品</button> {# 提交按钮 #}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

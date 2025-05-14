@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* 页面整体样式调整 */
+    .container {
+        margin-top: 30px;
+        /* 顶部距离 */
+        padding: 20px;
+        /* 容器内边距 */
+    }
+
+    /* 导语样式 */
+    .introduction {
+        margin-bottom: 40px;
+        /* 导语与商品详情之间的距离 */
+        padding: 15px;
+        background-color: #fff;
+        /* 白色背景 */
+        border: 1px solid #eee;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .introduction-paragraph {
+        color: #555;
+        line-height: 1.7;
+        margin-bottom: 15px;
+        /* 段落之间的距离 */
+    }
+
+    .introduction-paragraph:last-child {
+        margin-bottom: 0;
+        /* 移除最后一个段落的底部距离 */
+    }
+
+    .introduction-paragraph span {
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    /* 商品详情容器 */
+    .product-detail-container {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        /* 图片和文字之间的距离（增加） */
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        max-width: 960px;
+        /* 稍微调整最大宽度 */
+        margin-left: auto;
+        margin-right: auto;
+        align-items: flex-start;
+        /* 顶部对齐图片和文本 */
+    }
+
+    .product-image-column {
+        flex: 0 0 auto;
+        /* 允许内容撑开宽度 */
+        width: 300px;
+        /* 设置图片固定宽度 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .product-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-info-column {
+        flex: 1;
+        /* max-width: 50%; 移除最大宽度，允许自适应 */
+    }
+
+    .product-title {
+        font-size: 2.2rem;
+        /* 稍微减小标题字号 */
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .product-price {
+        font-size: 1.6rem;
+        /* 稍微减小价格字号 */
+        color: #dc3545;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    .product-description {
+        line-height: 1.7;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .introduction-paragraph {
+        text-align: center;
+    }
+
+    .product-stock {
+        color: #28a745;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .product-not-in-stock {
+        color: #dc3545;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .buy-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        /* 稍微减小按钮内边距 */
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        /* 稍微减小按钮字号 */
+        transition: background-color 0.3s ease;
+    }
+
+    .buy-button:hover {
+        background-color: #0056b3;
+    }
+
+    .breadcrumb {
+        display: flex;
+        /* 启用 Flexbox，方便后续对齐 */
+        justify-content: center;
+        /* 水平居中子元素（li） */
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    /* 如果输入的数量为“1”，则采用以下样式*/
+    .quantity-input {
+        width: 60px;
+        padding: 8px;
+        margin-right: 10px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .actions-container {
+        display: flex;
+        align-items: center;
+        margin-top: 20px; /* 根据需要进行调整 */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="introduction">
+        <p class="introduction-paragraph">
+            玛德琳在「巧克力量子展」的第四展区驻足，指尖掠过3D打印的榛果银河系。参展须知提示每件作品都藏着通感彩蛋，她在75%委内瑞拉黑巧雕塑前俯身，热气中的苯乙胺分子正撞击着她的杏仁核。
+        </p>
+
+        <p class="introduction-paragraph">
+            隔壁传来可可脂裂变的脆响——穿着主厨服的男人正用测温枪扫描参观者的颈部动脉。当他将液态氮注入白巧比基尼模型时，展台上突然显现出弗洛伊德《梦的解析》投影。
+        </p>
+
+        <p class="introduction-paragraph">
+            "别碰那个凹槽。"他擒住她即将触到作品暗格的手，手套残留着马达加斯加香草荚气息，"这是体温感应机关。"在她36.5℃的指尖接触瞬间，雕塑内层的硅胶肌理如融化的月相徐徐展开，露出包裹在巧克力量子云里的振动模组。
+        </p>
+
+        <p class="introduction-paragraph">
+            她的耳垂比展柜里的胭脂树橙更红："你在这件《德米安》里藏了哈伯斯塔姆的情欲密码？"他的测温枪滑到她手腕："不，我在等第119位访客触发克罗尔心形波函数坍缩。"悬浮的可可豆在两人鼻尖之间共振，形成双星系统的潮汐锁定。
+        </p>
+
+        <p class="introduction-paragraph">
+            "真正的调温从38.1℃开始，就像初遇时瞳孔扩大的临界点。"那些精密的情趣装置此刻竟化作星空观测站，陨石巧克力在温控台上自行裂解，露出丝绒包裹的月相仪。
+        </p>
+    </div>
+
+    <div class="product-detail-container">
+        <div class="product-image-column">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+            <p>暂无图片</p>
+            {% endif %}
+        </div>
+        <div class="product-info-column">
+            <h1 class="product-title">{{ product.name }}</h1>
+            <p class="product-price">价格: ¥{{ product.price }}</p>
+            {% if product.stock > 0 %}
+            <p class="product-stock">库存: {{ product.stock }} 件</p>
+            <div class="actions-container">
+                <label for="quantityInput">数量:</label>
+                <input type="number" id="quantityInput" class="quantity-input" value="1" min="1" max="{{ product.stock }}">
+                {# 下面的这个按钮就是 JavaScript 会操作的对象。#}
+                <button id="buyNowButton" class="buy-button" data-product-id="{{ product.id }}">立即购买</button>
+            </div>
+            {% else %}
+            <p class="product-not-in-stock">缺货</p>
+            {% endif %}
+            <p class="product-description">{{ product.description|default:"暂无描述"|linebreaksbr }}</p>
+        </div>
+    </div>
+</div>
+<nav aria-label="breadcrumb" class="breadcrumb-section"> {# 添加一个 class 方便样式控制 #}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">商品详细</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block extra_js %}
+{# 子模板的 JavaScript 会被插入到这里 #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buyNowButton = document.getElementById('buyNowButton');
+        const quantityInput = document.getElementById('quantityInput');
+    
+        if (buyNowButton) {
+            buyNowButton.addEventListener('click', function() {
+                const productId = this.dataset.productId;
+                let quantity = 1;
+                if (quantityInput) {
+                    quantity = parseInt(quantityInput.value, 10);
+                    if (isNaN(quantity) || quantity < 1) {
+                        alert('请输入有效的购买数量。');
+                        return;
+                    }
+                    const maxStock = parseInt(quantityInput.max, 10);
+                     if (quantity > maxStock) {
+                        alert('购买数量不能超过库存数量。');
+                        return;
+                    }
+                }
+    
+                // 如果需要的话，在这里显示一些加载指示器。
+    
+                fetch(`/order/buy/${productId}/`, { // 请确保此 URL 与你的 urls.py 文件中的内容相匹配。
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}', // Django CSRF 保护机制
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ quantity: quantity })
+                })
+                .then(response => {
+                    // 隐藏加载指示器
+                    if (!response.ok) {
+                        // 如果后端发送了 JSON 响应，则尝试从中解析出错误信息。
+                        return response.json().then(errData => {
+                            throw new Error(errData.message || `服务器错误: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success' && data.order_id) {
+                        // 重定向至新的支付页面网址
+                        window.location.href = `/order/payment/${data.order_id}/`; // 请确保此网址与预期一致
+                    } else {
+                        alert(data.message || '创建订单失败。');
+                    }
+                })
+                .catch(error => {
+                    // 隐藏加载指示器
+                    console.error('Error:', error);
+                    alert('操作失败: ' + error.message);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}
