@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'myemail',
     'event',
     'order',
+    'mycache',
 
 ]
 
@@ -175,3 +176,22 @@ ORDER_STATUS_UNPAID = 'unpaid' # 请确保与您的models.py中的实际值一�
 ORDER_STATUS_PAID = 'paid'     # 请确保与您的models.py中的实际值一致
 ORDER_STATUS_CANCELED = 'canceled' # 请确保与您的models.py中的实际值一致
 
+# 缓存
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache',
+        'TIMEOUT': 300, # 缓存保存时间，单位秒,这个设置等价于 CACHE_TTL 和 DEFAULT_CACHE_TTL，并且会覆盖它们。
+                        # TIMEOUT 是 CACHES 字典内部的键，用于配置缓存的过期时间。
+        'OPTIONS': {
+            'MAX_ENTRIES': 100, # 缓存最大数据条数
+            'CULL_FREQUENCY': 2, # 缓存条数达到最大值时，删除 1/X 的缓存数据.指定当缓存条目数量达到 MAX_ENTRIES 时，删除缓存条目的频率。
+                                 # Django 会删除大约 1/CULL_FREQUENCY (即 1/2，也就是50%) 的缓存条目。CULL_FREQUENCY 必须是大于 0 的整数。
+        }
+
+    }
+}
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_SAVE_EVERY_REQUEST = True  # 仅在开发环境中启用

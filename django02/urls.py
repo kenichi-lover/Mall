@@ -1,19 +1,4 @@
-"""
-URL configuration for django02 project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path,include
 from user import views
@@ -23,11 +8,12 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.HomePageView.as_view(),name='home'),
-    path('user/',include('user.urls'),name='user'),
-    path('product/',include('product.urls'),name='product'),
-    path('myemail/',include('myemail.urls'),name='myemail'),
-    path('event/',include('event.urls'),name='event'),
-    path('order/',include('order.urls'),name='order'),
+    path('user/',include('user.urls',namespace='user')),
+    path('product/',include('product.urls',namespace='product')),
+    path('myemail/',include('myemail.urls',namespace='myemail')),
+    path('event/',include('event.urls',namespace='event')),
+    path('order/',include('order.urls',namespace='order')),
+    path('mycache/',include('mycache.urls',namespace='mycache')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
