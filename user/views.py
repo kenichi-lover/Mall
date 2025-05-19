@@ -102,7 +102,8 @@ class RegisterView(CreateView):  # 实现注册功能
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect(self.get_success_url())
+            # 将 self.success_url 转换为字符串再传递给 redirect
+            return redirect(str(self.success_url))
         return super().dispatch(request, *args, **kwargs)
 
 

@@ -7,7 +7,6 @@ from django.conf import settings
 from django.urls import reverse
 import json
 import os
-import sys
 from pathlib import Path
 from django.utils import timezone 
 from django.utils.dateparse import parse_datetime 
@@ -272,7 +271,6 @@ def payment_return_view(request):
     data = request.GET.dict()
     signature = data.pop("sign", None)
     order_id = data.get('out_trade_no')
-    alipay_trade_no = data.get('trade_no') # 尝试获取 trade_no
     # gmt_payment_str = data.get('gmt_payment') # 同步返回中可能不包含此字段
 
     logger.info(f"收到支付宝同步返回，订单号: {order_id}")
@@ -280,15 +278,6 @@ def payment_return_view(request):
     success = alipay.verify(data, signature)
 
     logger.info(f"Alipay synchronous return verification result: {success}")
-
-    # --- 添加的 DEBUG print 可以保留或暂时移除 ---
-    # print(f"--- DEBUG START ---", file=sys.stderr)
-    # print(f"DEBUG data dictionary: {data}", file=sys.stderr)
-    # print(f"DEBUG data.get('trade_status'): {data.get('trade_status')}", file=sys.stderr)
-    # print(f"DEBUG 'trade_status' in data: {'trade_status' in data}", file=sys.stderr)
-    # print(f"DEBUG data.get('trade_no'): {data.get('trade_no')}", file=sys.stderr) # 也打印一下 trade_no
-    # print(f"--- DEBUG END ---", file=sys.stderr)
-    # --- DEBUG print 结束 ---
 
 
     # 修改判断条件：签名验证成功 并且 支付宝交易号 (trade_no) 存在
