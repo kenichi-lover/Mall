@@ -10,30 +10,30 @@
             <div class="modal-body">
                 <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane"
-                            type="button" role="tab" aria-controls="login-pane" aria-selected="true">登录</button>
+                        <button class="nav-link {% if active_tab == 'login-pane' %}active{% endif %}" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane"
+                                type="button" role="tab" aria-controls="login-pane" aria-selected="{% if active_tab == 'login-pane' %}true{% else %}false{% endif %}">登录</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane"
-                            type="button" role="tab" aria-controls="register-pane" aria-selected="false">注册</button>
+                        <button class="nav-link {% if active_tab == 'register-pane' %}active{% endif %}" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane"
+                                type="button" role="tab" aria-controls="register-pane" aria-selected="{% if active_tab == 'register-pane' %}true{% else %}false{% endif %}">注册</button>
                     </li>
                 </ul>
                 <div class="tab-content" id="authTabsContent">
-                    <div class="tab-pane fade show active" id="login-pane" role="tabpanel" aria-labelledby="login-tab"
-                        tabindex="0">
-                        <form method="post" action="{% url 'user:login' %}"> {# 确保 'user:login' 是你的登录视图的 URL 名称 #}
+                    <div class="tab-pane fade {% if active_tab == 'login-pane' %}show active{% endif %}" id="login-pane" role="tabpanel" aria-labelledby="login-tab"
+                         tabindex="0">
+                        <form method="post" action=""> {# action 可以留空，让表单提交到当前 URL #}
                             {% csrf_token %}
-                            {{ login_form.as_p }} {# 将 form 替换为你在视图中传递的登录表单变量名，例如 login_form #}
-                            <button type="submit" class="btn btn-primary">登录</button>
+                            {{ login_form.as_p }} {# 使用你在视图中传递的登录表单变量名，例如 login_form #}
+                            <button type="submit" name="login_submit" class="btn btn-primary">登录</button> {# **优化点 7：为登录按钮添加 name 属性** #}
                         </form>
                     </div>
 
-                    <div class="tab-pane fade" id="register-pane" role="tabpanel" aria-labelledby="register-tab"
-                        tabindex="0">
-                        <form method="post" action="{% url 'user:register' %}"> {# 假设你的注册视图的 URL 名称是 'user:register' #}
+                    <div class="tab-pane fade {% if active_tab == 'register-pane' %}show active{% endif %}" id="register-pane" role="tabpanel" aria-labelledby="register-tab"
+                         tabindex="0">
+                        <form method="post" action=""> {# action 可以留空，让表单提交到当前 URL #}
                             {% csrf_token %}
                             {{ register_form.as_p }} {# 使用你在视图中传递的注册表单变量名，例如 register_form #}
-                            <button type="submit" class="btn btn-success">注册</button> {# 注册按钮可以使用不同的样式 #}
+                            <button type="submit" name="register_submit" class="btn btn-success">注册</button> {# **优化点 8：为注册按钮添加 name 属性** #}
                         </form>
                     </div>
                 </div>
@@ -41,3 +41,31 @@
         </div>
     </div>
 </div>
+
+{# 优化点 9：在页面加载时根据 show_modal_on_load 变量决定是否打开模态框 #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 使用一个标志来决定是否在页面加载时打开模态框
+        // 确保传递了 'show_modal_on_load' 上下文变量
+        {% if show_modal_on_load %}
+            var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+
+            // 确保激活正确的tab
+            var authTabs = new bootstrap.Tab(document.getElementById('{{ active_tab }}-tab'));
+            authTabs.show();
+        {% endif %}
+    });
+</script>
+
+{# 优化点 10：显示 Django messages #}
+{% if messages %}
+<div class="messages-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
